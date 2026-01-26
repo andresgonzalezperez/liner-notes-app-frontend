@@ -4,6 +4,7 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+// Public pages
 import Home from "./pages/Home";
 import Albums from "./pages/Albums";
 import Artists from "./pages/Artists";
@@ -12,8 +13,10 @@ import Signup from "./pages/Signup";
 import AlbumDetails from "./pages/AlbumDetails";
 import ArtistDetails from "./pages/ArtistDetails";
 import ProfilePage from "./pages/ProfilePage";
+import MyFavorites from "./pages/MyFavorites";
 import NotFound from "./pages/NotFound";
-// Admin routes
+
+// Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageArtists from "./pages/admin/ManageArtists";
 import ManageAlbums from "./pages/admin/ManageAlbums";
@@ -30,6 +33,7 @@ function App() {
 
       <main className="main-container">
         <Routes>
+
           {/* Public routes */}
           <Route path="/" element={<Home />} />
           <Route path="/albums" element={<Albums />} />
@@ -38,8 +42,9 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/albums/:albumId" element={<AlbumDetails />} />
           <Route path="/artists/:artistId" element={<ArtistDetails />} />
+          <Route path="/my-favorites" element={<MyFavorites />} />
 
-          {/* Protected routes */}
+          {/* User protected routes */}
           <Route
             path="/profile"
             element={
@@ -49,8 +54,9 @@ function App() {
             }
           />
 
+          {/* Admin protected routes */}
           <Route
-            path="/admin"
+            path="/admin/dashboard"
             element={
               <ProtectedRoute adminOnly={true}>
                 <AdminDashboard />
@@ -123,6 +129,7 @@ function App() {
 
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
+
         </Routes>
       </main>
     </>
@@ -130,3 +137,4 @@ function App() {
 }
 
 export default App;
+

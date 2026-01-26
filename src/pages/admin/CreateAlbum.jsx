@@ -8,7 +8,6 @@ function CreateAlbum() {
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
   const [year, setYear] = useState("");
-  const [cover, setCover] = useState("");
   const [genre, setGenre] = useState("");
   const [tracklist, setTracklist] = useState([""]);
 
@@ -17,7 +16,8 @@ function CreateAlbum() {
   useEffect(() => {
     axios
       .get("http://localhost:5005/artists")
-      .then((res) => setArtists(res.data));
+      .then((res) => setArtists(res.data))
+      .catch((err) => console.log(err));
   }, []);
 
   const handleTrackChange = (index, value) => {
@@ -30,21 +30,59 @@ function CreateAlbum() {
     setTracklist([...tracklist, ""]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios
-      .post(
+    if (!artist) {
+      alert("Please select an artist");
+      return;
+    }
+
+    try {
+      // 1) Create album WITHOUT cover
+      const createRes = await axios.post(
         "http://localhost:5005/albums",
-        { title, artist, year, cover, genre, tracklist },
+        {
+          title,
+          artist,
+          year: Number(year),
+          genre,
+          tracklist,
+        },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
-      )
-      .then(() => navigate("/admin/albums"))
-      .catch((err) => console.log(err));
+      );
+
+      const createdAlbum = createRes.data;
+
+      // 2) Upload cover to Cloudinary
+      const imageFile = e.target.imageUrl.files[0];
+
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("imageUrl", imageFile);
+
+        await axios.post(
+          `http://localhost:5005/albums/${createdAlbum._id}/upload-cover`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+      }
+
+      // 3) Redirect
+      navigate("/admin/albums");
+
+    } catch (err) {
+      console.log(err);
+      alert("Error creating album");
+    }
   };
 
   return (
@@ -79,11 +117,12 @@ function CreateAlbum() {
         onChange={(e) => setYear(e.target.value)}
       />
 
+      {/* File input for Cloudinary */}
       <input
         className="admin-input"
-        placeholder="Cover URL"
-        value={cover}
-        onChange={(e) => setCover(e.target.value)}
+        type="file"
+        name="imageUrl"
+        accept="image/*"
       />
 
       <input
@@ -114,3 +153,4 @@ function CreateAlbum() {
 }
 
 export default CreateAlbum;
+

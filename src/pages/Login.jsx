@@ -4,23 +4,31 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const { authenticateUser } = useContext(AuthContext);
+  const { authenticateUser, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios
-      .post("http://localhost:5005/auth/login", { email, password })
-      .then((res) => {
-        localStorage.setItem("authToken", res.data.authToken);
-        authenticateUser();
-        navigate("/");
-      })
-      .catch((err) => console.log(err));
+    try {
+      // Send login request
+      const res = await axios.post("http://localhost:5005/auth/login", {
+        email,
+        password,
+      });
+
+      // Store token in localStorage
+      localStorage.setItem("authToken", res.data.authToken);
+
+      // Wait for AuthContext to refresh user data
+      await authenticateUser();
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -43,9 +51,13 @@ function Login() {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <button className="auth-button" type="submit">Login</button>
+      <button className="auth-button" type="submit">
+        Login
+      </button>
     </form>
   );
 }
 
 export default Login;
+
+

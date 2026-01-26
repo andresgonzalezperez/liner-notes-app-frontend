@@ -3,11 +3,22 @@ import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 function ProtectedRoute({ children, adminOnly = false }) {
-  const { isLoggedIn, user } = useContext(AuthContext);
+  const { isLoggedIn, isLoading, isAdmin } = useContext(AuthContext);
 
-  if (!isLoggedIn) return <Navigate to="/login" />;
+  // Wait until authentication finishes
+  if (isLoading) {
+    return <p className="loading">Checking authentication...</p>;
+  }
 
-  if (adminOnly && user.role !== "admin") return <Navigate to="/" />;
+  // User not logged in
+  if (!isLoggedIn) {
+    return <Navigate to="/login" />;
+  }
+
+  // Admin-only route
+  if (adminOnly && !isAdmin) {
+    return <Navigate to="/" />;
+  }
 
   return children;
 }

@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -8,49 +9,52 @@ function AuthProviderWrapper({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
 
-  const authenticateUser = () => {
+  const navigate = useNavigate();
+
+  // Verify token and load user data
+  const authenticateUser = async () => {
     const storedToken = localStorage.getItem("authToken");
 
-    // Detectar tokens corruptos o vacíos
-    if (
-      !storedToken ||
-      storedToken === "null" ||
-      storedToken === "undefined" ||
-      storedToken.trim() === ""
-    ) {
-      localStorage.removeItem("authToken");
+    if (!storedToken) {
       setIsLoggedIn(false);
-      setIsLoading(false);
       setUser(null);
+      setIsLoading(false);
       return;
     }
 
-    axios
-      .get("http://localhost:5005/auth/verify", {
+    try {
+      // Validate token and get user data
+      const res = await axios.get("http://localhost:5005/auth/verify", {
         headers: { Authorization: `Bearer ${storedToken}` },
-      })
-      .then((res) => {
-        setIsLoggedIn(true);
-        setIsLoading(false);
-        setUser(res.data);
-      })
-      .catch(() => {
-        // Si el token es inválido, lo limpiamos
-        localStorage.removeItem("authToken");
-        setIsLoggedIn(false);
-        setIsLoading(false);
-        setUser(null);
       });
+
+      // Save user data in context
+      setUser(res.data);
+      setIsLoggedIn(true);
+      setIsLoading(false);
+
+    } catch (error) {
+      console.log("Error verifying token:", error);
+
+      // Invalid token → clear session
+      setIsLoggedIn(false);
+      setUser(null);
+      setIsLoading(false);
+    }
   };
 
+  // Logout function
+  const logOutUser = () => {
+    localStorage.removeItem("authToken");
+    setIsLoggedIn(false);
+    setUser(null);
+    navigate("/");
+  };
+
+  // Run authentication on app load
   useEffect(() => {
     authenticateUser();
   }, []);
-
-  const logOutUser = () => {
-    localStorage.removeItem("authToken");
-    authenticateUser();
-  };
 
   return (
     <AuthContext.Provider
@@ -58,6 +62,7 @@ function AuthProviderWrapper({ children }) {
         isLoggedIn,
         isLoading,
         user,
+        isAdmin: user?.role === "admin", 
         authenticateUser,
         logOutUser,
       }}

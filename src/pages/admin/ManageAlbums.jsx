@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
 
 function ManageAlbums() {
   const [albums, setAlbums] = useState([]);
+  const { isAdmin } = useContext(AuthContext);
 
   useEffect(() => {
     axios
@@ -13,6 +15,8 @@ function ManageAlbums() {
   }, []);
 
   const handleDelete = (albumId) => {
+    if (!isAdmin) return;
+
     axios
       .delete(`http://localhost:5005/albums/${albumId}`, {
         headers: {
@@ -20,9 +24,12 @@ function ManageAlbums() {
         },
       })
       .then(() => {
-        setAlbums(albums.filter((album) => album._id !== albumId));
+        setAlbums((prev) => prev.filter((album) => album._id !== albumId));
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        alert("Error deleting album");
+      });
   };
 
   return (
@@ -36,7 +43,14 @@ function ManageAlbums() {
       <ul className="admin-list">
         {albums.map((album) => (
           <li key={album._id} className="admin-item">
-            {album.title}
+            <strong>{album.title}</strong>
+            {album.artist && (
+              <span className="admin-subtext"> — {album.artist.name}</span>
+            )}
+            <span className="admin-subtext">
+              {" "}
+              ({album.reviews?.length || 0} reviews)
+            </span>
 
             <div>
               <Link

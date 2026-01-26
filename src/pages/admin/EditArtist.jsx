@@ -8,8 +8,8 @@ function EditArtist() {
 
   const [name, setName] = useState("");
   const [genre, setGenre] = useState("");
-  const [photo, setPhoto] = useState("");
-  const [bio, setBio] = useState("");
+  const [country, setCountry] = useState("");
+  const [image, setImage] = useState("");
 
   useEffect(() => {
     axios
@@ -17,27 +17,52 @@ function EditArtist() {
       .then((res) => {
         setName(res.data.name);
         setGenre(res.data.genre);
-        setPhoto(res.data.photo);
-        setBio(res.data.bio || "");
+        setCountry(res.data.country || "");
+        setImage(res.data.image || "");
       })
       .catch((err) => console.log(err));
   }, [artistId]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios
-      .put(
+    try {
+      // 1) Update artist WITHOUT touching the image
+      await axios.put(
         `http://localhost:5005/artists/${artistId}`,
-        { name, genre, photo, bio },
+        { name, genre, country },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
-      )
-      .then(() => navigate("/admin/artists"))
-      .catch((err) => console.log(err));
+      );
+
+      // 2) If a new image was selected → upload to Cloudinary
+      const imageFile = e.target.imageUrl.files[0];
+
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("imageUrl", imageFile);
+
+        await axios.post(
+          `http://localhost:5005/artists/${artistId}/upload-image`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+      }
+
+      // 3) Redirect
+      navigate("/admin/artists");
+
+    } catch (err) {
+      console.log(err);
+      alert("Error updating artist");
+    }
   };
 
   return (
@@ -60,16 +85,26 @@ function EditArtist() {
 
       <input
         className="admin-input"
-        placeholder="Photo URL"
-        value={photo}
-        onChange={(e) => setPhoto(e.target.value)}
+        placeholder="Country"
+        value={country}
+        onChange={(e) => setCountry(e.target.value)}
       />
 
-      <textarea
+      {/* Show current image */}
+      {image && (
+        <img
+          src={image}
+          alt="Current artist"
+          className="artist-edit-image-preview"
+        />
+      )}
+
+      {/* File input for Cloudinary */}
+      <input
         className="admin-input"
-        placeholder="Bio"
-        value={bio}
-        onChange={(e) => setBio(e.target.value)}
+        type="file"
+        name="imageUrl"
+        accept="image/*"
       />
 
       <button className="admin-button">Save Changes</button>
@@ -78,3 +113,4 @@ function EditArtist() {
 }
 
 export default EditArtist;
+

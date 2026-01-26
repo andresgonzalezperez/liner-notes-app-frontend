@@ -1,53 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
+import UserRow from "./UserRow";
 
 function ManageUsers() {
   const [users, setUsers] = useState([]);
+  const [editingUserId, setEditingUserId] = useState(null);
+  const { isAdmin } = useContext(AuthContext);
+
+  // Fetch all users
+  const fetchUsers = async () => {
+    try {
+      const res = await axios.get("http://localhost:5005/users", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+      setUsers(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5005/users", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      })
-      .then((res) => setUsers(res.data))
-      .catch((err) => console.log(err));
+    fetchUsers();
   }, []);
-
-  const toggleRole = (userId, currentRole) => {
-    const newRole = currentRole === "admin" ? "user" : "admin";
-
-    axios
-      .put(
-        `http://localhost:5005/users/${userId}/role`,
-        { role: newRole },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        }
-      )
-      .then(() => {
-        setUsers(
-          users.map((u) =>
-            u._id === userId ? { ...u, role: newRole } : u
-          )
-        );
-      });
-  };
-
-  const handleDelete = (userId) => {
-    axios
-      .delete(`http://localhost:5005/users/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      })
-      .then(() => {
-        setUsers(users.filter((u) => u._id !== userId));
-      });
-  };
 
   return (
     <div className="admin-page">
@@ -55,25 +32,14 @@ function ManageUsers() {
 
       <ul className="admin-list">
         {users.map((user) => (
-          <li key={user._id} className="admin-item">
-            {user.username} — {user.role}
-
-            <div>
-              <button
-                className="admin-edit"
-                onClick={() => toggleRole(user._id, user.role)}
-              >
-                Toggle Role
-              </button>
-
-              <button
-                className="admin-delete"
-                onClick={() => handleDelete(user._id)}
-              >
-                Delete
-              </button>
-            </div>
-          </li>
+          <UserRow
+            key={user._id}
+            user={user}
+            isEditing={editingUserId === user._id}
+            onEdit={() => setEditingUserId(user._id)}
+            onCancel={() => setEditingUserId(null)}
+            onUpdated={fetchUsers}
+          />
         ))}
       </ul>
     </div>
@@ -81,3 +47,4 @@ function ManageUsers() {
 }
 
 export default ManageUsers;
+

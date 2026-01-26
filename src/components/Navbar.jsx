@@ -2,48 +2,67 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import logo from "../assets/Liner-Notes-logo-500x500.png";
+import defaultAvatar from "../assets/default-avatar.png";
 
 function Navbar() {
-  const { isLoggedIn, user, logOutUser } = useContext(AuthContext);
+  const { isLoggedIn, isAdmin, user, logOutUser } = useContext(AuthContext);
 
   return (
     <nav className="navbar">
-      <div className="nav-left">
-        <Link to="/" className="nav-logo">
-          <img src={logo} alt="Liner Notes Logo" className="logo-img" />
-        </Link>
-
-        <Link to="/albums" className="nav-link">Albums</Link>
-        <Link to="/artists" className="nav-link">Artists</Link>
-      </div>
-
-      <div className="nav-right">
-        {!isLoggedIn && (
-          <>
-            <Link to="/login" className="nav-link">Login</Link>
-            <Link to="/signup" className="nav-link">Signup</Link>
-          </>
-        )}
-
-        {isLoggedIn && (
-          <>
-            <Link to="/profile" className="nav-profile-btn">
-              My Profile
+      <div className="navbar-inner">
+        {/* Left side */}
+        <div className="nav-left">
+          <Link to="/albums" className="nav-link">
+            Albums
+          </Link>
+          <Link to="/artists" className="nav-link">
+            Artists
+          </Link>
+          {isLoggedIn && <Link to="/my-favorites">My Favorites</Link>}
+          {isLoggedIn && isAdmin && (
+            <Link to="/admin/dashboard" className="nav-link">
+              Admin Dashboard
             </Link>
+          )}
+        </div>
 
-            <span className="nav-user">Hi, {user?.username}</span>
+        {/* Center logo */}
+        <div className="nav-center">
+          <Link to="/" className="nav-logo">
+            <img src={logo} alt="Liner Notes Logo" className="logo-img" />
+          </Link>
+        </div>
 
-            <button className="nav-button" onClick={logOutUser}>
-              Logout
-            </button>
-          </>
-        )}
+        {/* Right side */}
+        <div className="nav-right">
+          {!isLoggedIn ? (
+            <>
+              <Link to="/login" className="nav-link">
+                Login
+              </Link>
+              <Link to="/signup" className="nav-link">
+                Signup
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/profile" className="nav-profile">
+                <span className="nav-user">Hi, {user?.username}</span>
+                <img
+                  src={user?.avatar || defaultAvatar}
+                  alt="avatar"
+                  className="nav-avatar"
+                />
+              </Link>
+              <button className="nav-button" onClick={logOutUser}>
+                Logout
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </nav>
   );
 }
 
 export default Navbar;
-
-
-

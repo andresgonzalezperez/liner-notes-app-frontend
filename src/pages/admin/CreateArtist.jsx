@@ -1,25 +1,90 @@
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 function CreateArtist() {
   const [name, setName] = useState("");
   const [genre, setGenre] = useState("");
-  const [photo, setPhoto] = useState("");
+  const [country, setCountry] = useState("");
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios.post(
-      "http://localhost:5005/artists",
-      { name, genre, photo },
-      { headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` } }
-    );
+    try {
+      // 1) Create artist WITHOUT image
+      const createRes = await axios.post(
+        "http://localhost:5005/artists",
+        { name, genre, country },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
+
+      const createdArtist = createRes.data;
+
+      // 2) Upload image to Cloudinary
+      const imageFile = e.target.imageUrl.files[0];
+
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("imageUrl", imageFile);
+
+        await axios.post(
+          `http://localhost:5005/artists/${createdArtist._id}/upload-image`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+      }
+
+      // 3) Redirect
+      navigate("/admin/artists");
+
+    } catch (err) {
+      console.log(err);
+      alert("Error creating artist");
+    }
   };
 
   return (
     <form className="admin-form" onSubmit={handleSubmit}>
       <h2>Create Artist</h2>
 
-      <input className="admin-input" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-      <input className="admin-input" placeholder="Genre" value={genre} onChange={(e) => setGenre(e.target.value)} />
-      <input className="admin-input" placeholder="Photo URL" value={photo} onChange={(e) => setPhoto(e.target.value)} />
+      <input
+        className="admin-input"
+        placeholder="Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+
+      <input
+        className="admin-input"
+        placeholder="Genre"
+        value={genre}
+        onChange={(e) => setGenre(e.target.value)}
+      />
+
+      <input
+        className="admin-input"
+        placeholder="Country"
+        value={country}
+        onChange={(e) => setCountry(e.target.value)}
+      />
+
+      {/* File input for Cloudinary */}
+      <input
+        className="admin-input"
+        type="file"
+        name="imageUrl"
+        accept="image/*"
+      />
 
       <button className="admin-button">Create</button>
     </form>
@@ -27,3 +92,4 @@ function CreateArtist() {
 }
 
 export default CreateArtist;
+
