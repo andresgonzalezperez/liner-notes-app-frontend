@@ -1,11 +1,12 @@
 import UserEditForm from "./UserEditForm";
 import axios from "axios";
 import defaultAvatar from "../../assets/default-avatar.png";
+import { API_URL } from "../../../config/config";
 
 function UserRow({ user, isEditing, onEdit, onCancel, onUpdated }) {
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5005/users/${user._id}`, {
+      await axios.delete(`${API_URL}/users/${user._id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },

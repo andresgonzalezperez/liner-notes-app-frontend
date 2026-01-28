@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../../config/config";
 
 function CreateAlbum() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function CreateAlbum() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5005/artists")
+      .get(`${API_URL}/artists`)
       .then((res) => setArtists(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -41,7 +42,7 @@ function CreateAlbum() {
     try {
       // Create album WITHOUT cover
       const createRes = await axios.post(
-        "http://localhost:5005/albums",
+        `${API_URL}/albums`,
         {
           title,
           artist,
@@ -66,7 +67,7 @@ function CreateAlbum() {
         formData.append("imageUrl", imageFile);
 
         await axios.post(
-          `http://localhost:5005/albums/${createdAlbum._id}/upload-cover`,
+          `${API_URL}/albums/${createdAlbum._id}/upload-cover`,
           formData,
           {
             headers: {

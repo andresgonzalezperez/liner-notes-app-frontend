@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
+import { API_URL } from "../../../config/config";
 
 function AdminDashboard() {
   const [albums, setAlbums] = useState([]);
@@ -18,11 +19,11 @@ function AdminDashboard() {
     try {
       const token = localStorage.getItem("authToken");
 
-      const albumsReq = axios.get("http://localhost:5005/albums");
-      const artistsReq = axios.get("http://localhost:5005/artists");
+      const albumsReq = axios.get(`${API_URL}/albums`);
+      const artistsReq = axios.get(`${API_URL}/artists`);
 
       const usersReq = isAdmin
-        ? axios.get("http://localhost:5005/users", {
+        ? axios.get(`${API_URL}/users`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         : Promise.resolve({ data: [] });

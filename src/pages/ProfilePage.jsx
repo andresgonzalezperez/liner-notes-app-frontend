@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import defaultAvatar from "../assets/default-avatar.png";
+import { API_URL } from "../../config/config";
 
 function ProfilePage() {
   const { user, authenticateUser } = useContext(AuthContext);
@@ -31,7 +32,7 @@ function ProfilePage() {
 
     try {
       await axios.put(
-        `http://localhost:5005/users/${user._id}/update`,
+        `${API_URL}/users/${user._id}/update`,
         {
           username: formData.username,
           email: formData.email,
@@ -48,7 +49,7 @@ function ProfilePage() {
         formData.newPassword.trim() !== ""
       ) {
         await axios.put(
-          `http://localhost:5005/users/${user._id}/change-password`,
+          `${API_URL}/users/${user._id}/change-password`,
           {
             currentPassword: formData.currentPassword,
             newPassword: formData.newPassword,
@@ -66,7 +67,7 @@ function ProfilePage() {
         uploadData.append("imageUrl", formData.avatarFile);
 
         await axios.post(
-          `http://localhost:5005/users/update-profile-picture/${user._id}`,
+          `${API_URL}/users/update-profile-picture/${user._id}`,
           uploadData
         );
       }

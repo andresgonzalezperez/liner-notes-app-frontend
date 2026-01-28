@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import { API_URL } from "../../config/config";
 
 function ProfileEditForm({ onCancel }) {
   const { user, authenticateUser } = useContext(AuthContext);
@@ -21,7 +22,7 @@ function ProfileEditForm({ onCancel }) {
     try {
       // Update username + email
       await axios.put(
-        `http://localhost:5005/users/${user._id}/update`,
+        `${API_URL}/users/${user._id}/update`,
         {
           username: formData.username,
           email: formData.email,
@@ -36,7 +37,7 @@ function ProfileEditForm({ onCancel }) {
       // Update password if provided
       if (formData.password.trim() !== "") {
         await axios.put(
-          `http://localhost:5005/users/${user._id}/change-password`,
+          `${API_URL}/users/${user._id}/change-password`,
           {
             currentPassword: formData.password,
             newPassword: formData.password,

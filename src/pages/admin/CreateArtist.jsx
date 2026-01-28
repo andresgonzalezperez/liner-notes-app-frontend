@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../../config/config";
 
 function CreateArtist() {
   const [name, setName] = useState("");
@@ -15,7 +16,7 @@ function CreateArtist() {
     try {
       // Create artist WITHOUT image
       const createRes = await axios.post(
-        "http://localhost:5005/artists",
+        `${API_URL}/artists`,
         { name, genre, country },
         {
           headers: {
@@ -34,7 +35,7 @@ function CreateArtist() {
         formData.append("imageUrl", imageFile);
 
         await axios.post(
-          `http://localhost:5005/artists/${createdArtist._id}/upload-image`,
+          `${API_URL}/artists/${createdArtist._id}/upload-image`,
           formData,
           {
             headers: {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import { API_URL } from "../../../config/config";
 
 function EditArtist() {
   const { artistId } = useParams();
@@ -13,7 +14,7 @@ function EditArtist() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5005/artists/${artistId}`)
+      .get(`${API_URL}/artists/${artistId}`)
       .then((res) => {
         setName(res.data.name);
         setGenre(res.data.genre);
@@ -29,7 +30,7 @@ function EditArtist() {
     try {
       // Update artist (without touching image)
       await axios.put(
-        `http://localhost:5005/artists/${artistId}`,
+        `${API_URL}/artists/${artistId}`,
         { name, genre, country },
         {
           headers: {
@@ -46,7 +47,7 @@ function EditArtist() {
         formData.append("imageUrl", imageFile);
 
         await axios.post(
-          `http://localhost:5005/artists/${artistId}/upload-image`,
+          `${API_URL}/artists/${artistId}/upload-image`,
           formData,
           {
             headers: {

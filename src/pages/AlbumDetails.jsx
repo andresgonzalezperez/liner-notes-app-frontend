@@ -4,6 +4,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import RatingRings from "../components/RatingRings";
 import ringIcon from "../assets/ring.png";
+import { API_URL } from "../../config/config";
 
 function AlbumDetails() {
   const { albumId } = useParams();
@@ -16,7 +17,7 @@ function AlbumDetails() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5005/albums/${albumId}`)
+      .get(`${API_URL}/albums/${albumId}`)
       .then((res) => setAlbum(res.data))
       .catch((err) => console.log(err));
   }, [albumId]);
@@ -27,7 +28,7 @@ function AlbumDetails() {
     try {
       if (isFavorite) {
         await axios.delete(
-          `http://localhost:5005/users/${user._id}/favorites/albums/${albumId}`,
+          `${API_URL}/users/${user._id}/favorites/albums/${albumId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -36,7 +37,7 @@ function AlbumDetails() {
         );
       } else {
         await axios.post(
-          `http://localhost:5005/users/${user._id}/favorites/albums/${albumId}`,
+          `${API_URL}/users/${user._id}/favorites/albums/${albumId}`,
           {},
           {
             headers: {
@@ -58,7 +59,7 @@ function AlbumDetails() {
 
     axios
       .post(
-        `http://localhost:5005/albums/${albumId}/reviews`,
+        `${API_URL}/albums/${albumId}/reviews`,
         { comment, rating },
         {
           headers: {
@@ -76,7 +77,7 @@ function AlbumDetails() {
 
   const handleDeleteReview = (reviewId) => {
     axios
-      .delete(`http://localhost:5005/albums/${albumId}/reviews/${reviewId}`, {
+      .delete(`${API_URL}/albums/${albumId}/reviews/${reviewId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },

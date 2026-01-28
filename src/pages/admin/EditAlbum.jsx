@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import { API_URL } from "../../../config/config";
 
 function EditAlbum() {
   const { albumId } = useParams();
@@ -17,12 +18,12 @@ function EditAlbum() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5005/artists")
+      .get(`${API_URL}/artists`)
       .then((res) => setArtists(res.data))
       .catch((err) => console.log(err));
 
     axios
-      .get(`http://localhost:5005/albums/${albumId}`)
+      .get(`${API_URL}/albums/${albumId}`)
       .then((res) => {
         const a = res.data;
         setTitle(a.title);
@@ -55,7 +56,7 @@ function EditAlbum() {
 
     try {
       await axios.put(
-        `http://localhost:5005/albums/${albumId}`,
+        `${API_URL}/albums/${albumId}`,
         {
           title,
           artist,
@@ -77,7 +78,7 @@ function EditAlbum() {
         formData.append("imageUrl", imageFile);
 
         await axios.post(
-          `http://localhost:5005/albums/${albumId}/upload-cover`,
+          `${API_URL}/albums/${albumId}/upload-cover`,
           formData,
           {
             headers: {

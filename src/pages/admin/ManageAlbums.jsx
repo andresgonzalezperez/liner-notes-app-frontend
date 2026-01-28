@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
+import { API_URL } from "../../../config/config";
 
 function ManageAlbums() {
   const [albums, setAlbums] = useState([]);
@@ -9,7 +10,7 @@ function ManageAlbums() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5005/albums")
+      .get(`${API_URL}/albums`)
       .then((res) => setAlbums(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -18,7 +19,7 @@ function ManageAlbums() {
     if (!isAdmin) return;
 
     axios
-      .delete(`http://localhost:5005/albums/${albumId}`, {
+      .delete(`${API_URL}/albums/${albumId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },

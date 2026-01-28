@@ -4,6 +4,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import RatingRings from "../components/RatingRings";
 import ringIcon from "../assets/ring.png";
+import { API_URL } from "../../config/config";
 
 
 function ArtistDetails() {
@@ -17,7 +18,7 @@ function ArtistDetails() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5005/artists/${artistId}`)
+      .get(`${API_URL}/artists/${artistId}`)
       .then((res) => setArtist(res.data))
       .catch((err) => console.log(err));
   }, [artistId]);
@@ -28,7 +29,7 @@ function ArtistDetails() {
     try {
       if (isFavorite) {
         await axios.delete(
-          `http://localhost:5005/users/${user._id}/favorites/artists/${artistId}`,
+          `${API_URL}/users/${user._id}/favorites/artists/${artistId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -37,7 +38,7 @@ function ArtistDetails() {
         );
       } else {
         await axios.post(
-          `http://localhost:5005/users/${user._id}/favorites/artists/${artistId}`,
+          `${API_URL}/users/${user._id}/favorites/artists/${artistId}`,
           {},
           {
             headers: {
@@ -59,7 +60,7 @@ function ArtistDetails() {
 
     axios
       .post(
-        `http://localhost:5005/artists/${artistId}/reviews`,
+        `${API_URL}/artists/${artistId}/reviews`,
         { comment, rating },
         {
           headers: {
@@ -77,7 +78,7 @@ function ArtistDetails() {
 
   const handleDeleteReview = (reviewId) => {
     axios
-      .delete(`http://localhost:5005/artists/${artistId}/reviews/${reviewId}`, {
+      .delete(`${API_URL}/artists/${artistId}/reviews/${reviewId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AlbumCard from "../components/AlbumCard";
+import { API_URL } from "../../config/config";
 
 function Albums() {
   const [albums, setAlbums] = useState([]);
@@ -8,7 +9,7 @@ function Albums() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5005/albums")
+      .get(`${API_URL}/albums`)
       .then((res) => setAlbums(res.data))
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));

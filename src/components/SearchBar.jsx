@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
+import { API_URL } from "../../config/config";
 
 function SearchBar() {
   const [query, setQuery] = useState("");
@@ -21,7 +22,7 @@ function SearchBar() {
       return;
     }
 
-    const res = await axios.get(`http://localhost:5005/search?q=${value}`);
+    const res = await axios.get(`${API_URL}/search?q=${value}`);
     setResults(res.data);
   };
 

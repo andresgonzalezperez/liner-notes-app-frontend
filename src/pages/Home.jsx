@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Carousel from "../components/Carousel";
 import AlbumCard from "../components/AlbumCard";
 import ArtistCard from "../components/ArtistCard";
+import { API_URL } from "../../config/config";
 
 function Home() {
   const [albums, setAlbums] = useState([]);
@@ -11,12 +12,12 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5005/albums")
+      .get(`${API_URL}albums`)
       .then((res) => setAlbums(res.data))
       .catch((err) => console.log(err));
 
     axios
-      .get("http://localhost:5005/artists")
+      .get(`${API_URL}/artists`)
       .then((res) => setArtists(res.data))
       .catch((err) => console.log(err));
   }, []);

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { API_URL } from "../../../config/config";
 
 function UserEditForm({ user, onCancel, onUpdated }) {
   const [formData, setFormData] = useState({
@@ -18,7 +19,7 @@ function UserEditForm({ user, onCancel, onUpdated }) {
 
     try {
       await axios.patch(
-        `http://localhost:5005/users/${user._id}`,
+        `${API_URL}/users/${user._id}`,
         formData,
         {
           headers: {

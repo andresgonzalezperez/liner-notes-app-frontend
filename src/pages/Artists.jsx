@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ArtistCard from "../components/ArtistCard";
+import { API_URL } from "../../config/config";
 
 function Artists() {
   const [artists, setArtists] = useState([]);
@@ -9,7 +10,7 @@ function Artists() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5005/artists")
+      .get(`${API_URL}/artists`)
       .then((res) => setArtists(res.data))
       .catch((err) => {
         console.log(err);

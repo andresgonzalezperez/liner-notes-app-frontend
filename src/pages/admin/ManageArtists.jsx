@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
+import { API_URL } from "../../../config/config";
 
 function ManageArtists() {
   const [artists, setArtists] = useState([]);
@@ -9,7 +10,7 @@ function ManageArtists() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5005/artists")
+      .get(`${API_URL}/artists`)
       .then((res) => setArtists(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -18,7 +19,7 @@ function ManageArtists() {
     if (!isAdmin) return;
 
     axios
-      .delete(`http://localhost:5005/artists/${id}`, {
+      .delete(`${API_URL}/artists/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
       })
       .then(() => {

@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../config/config";
 
 const AuthContext = createContext();
 
@@ -24,7 +25,7 @@ function AuthProviderWrapper({ children }) {
 
     try {
       // Validate token and get user data
-      const res = await axios.get("http://localhost:5005/auth/verify", {
+      const res = await axios.get(`${API_URL}/auth/verify`, {
         headers: { Authorization: `Bearer ${storedToken}` },
       });
 
