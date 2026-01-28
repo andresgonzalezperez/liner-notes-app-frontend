@@ -27,7 +27,7 @@ function EditArtist() {
     e.preventDefault();
 
     try {
-      // 1) Update artist WITHOUT touching the image
+      // Update artist (without touching image)
       await axios.put(
         `http://localhost:5005/artists/${artistId}`,
         { name, genre, country },
@@ -38,7 +38,7 @@ function EditArtist() {
         }
       );
 
-      // 2) If a new image was selected → upload to Cloudinary
+      // Upload new image if selected
       const imageFile = e.target.imageUrl.files[0];
 
       if (imageFile) {
@@ -56,9 +56,7 @@ function EditArtist() {
         );
       }
 
-      // 3) Redirect
       navigate("/admin/artists");
-
     } catch (err) {
       console.log(err);
       alert("Error updating artist");
@@ -66,51 +64,55 @@ function EditArtist() {
   };
 
   return (
-    <form className="admin-form" onSubmit={handleSubmit}>
-      <h2>Edit Artist</h2>
+    <div className="admin-page">
+      <h2 className="admin-title">Edit Artist</h2>
 
-      <input
-        className="admin-input"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-
-      <input
-        className="admin-input"
-        placeholder="Genre"
-        value={genre}
-        onChange={(e) => setGenre(e.target.value)}
-      />
-
-      <input
-        className="admin-input"
-        placeholder="Country"
-        value={country}
-        onChange={(e) => setCountry(e.target.value)}
-      />
-
-      {/* Show current image */}
-      {image && (
-        <img
-          src={image}
-          alt="Current artist"
-          className="artist-edit-image-preview"
+      <form className="admin-form" onSubmit={handleSubmit}>
+        <label className="admin-label">Name</label>
+        <input
+          className="admin-input"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
-      )}
 
-      {/* File input for Cloudinary */}
-      <input
-        className="admin-input"
-        type="file"
-        name="imageUrl"
-        accept="image/*"
-      />
+        <label className="admin-label">Genre</label>
+        <input
+          className="admin-input"
+          value={genre}
+          onChange={(e) => setGenre(e.target.value)}
+        />
 
-      <button className="admin-button">Save Changes</button>
-    </form>
+        <label className="admin-label">Country</label>
+        <input
+          className="admin-input"
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+        />
+
+        {image && (
+          <div className="cover-preview-box">
+            <img
+              src={image}
+              alt="Current artist"
+              className="cover-preview"
+            />
+          </div>
+        )}
+
+        <label className="admin-label">Upload New Image</label>
+        <input
+          className="admin-input"
+          type="file"
+          name="imageUrl"
+          accept="image/*"
+        />
+
+        <button className="admin-btn save">Save Changes</button>
+      </form>
+    </div>
   );
 }
 
 export default EditArtist;
+
 

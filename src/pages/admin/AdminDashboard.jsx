@@ -52,19 +52,19 @@ function AdminDashboard() {
       <div className="admin-grid">
 
         <Link to="/admin/artists" className="admin-card">
-          <h2>🎤 Artists</h2>
+          <h2>Artists</h2>
           <p>Manage all artists on the platform.</p>
           <p className="admin-count">Total: {artists.length}</p>
         </Link>
 
         <Link to="/admin/albums" className="admin-card">
-          <h2>💿 Albums</h2>
+          <h2>Albums</h2>
           <p>Manage all albums on the platform.</p>
           <p className="admin-count">Total: {albums.length}</p>
         </Link>
 
         <Link to="/admin/users" className="admin-card">
-          <h2>👤 Users</h2>
+          <h2>Users</h2>
           <p>Control user roles and remove users.</p>
           <p className="admin-count">Total: {users.length}</p>
         </Link>

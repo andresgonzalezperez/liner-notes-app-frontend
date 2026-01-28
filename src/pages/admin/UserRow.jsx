@@ -1,8 +1,8 @@
 import UserEditForm from "./UserEditForm";
 import axios from "axios";
+import defaultAvatar from "../../assets/default-avatar.png";
 
 function UserRow({ user, isEditing, onEdit, onCancel, onUpdated }) {
-  // Delete user
   const handleDelete = async () => {
     try {
       await axios.delete(`http://localhost:5005/users/${user._id}`, {
@@ -11,37 +11,51 @@ function UserRow({ user, isEditing, onEdit, onCancel, onUpdated }) {
         },
       });
 
-      onUpdated(); // Refresh list
+      onUpdated();
     } catch (err) {
       console.log(err);
       alert("Error deleting user");
     }
   };
 
-  // If editing, show inline form
+  // If editing: show inline form inside a card
   if (isEditing) {
     return (
-      <li className="admin-item">
+      <div className="admin-card">
         <UserEditForm user={user} onCancel={onCancel} onUpdated={onUpdated} />
-      </li>
+      </div>
     );
   }
 
-  // Normal row
+  // Normal row / admin card layout
   return (
-    <li className="admin-item">
-      <strong>{user.username}</strong> — {user.email} — {user.role}
+    <div className="admin-card">
+      <div className="admin-card-left">
+        <img
+          src={user.avatar || defaultAvatar}
+          alt={user.username}
+          className="admin-thumb"
+        />
 
-      <div>
-        <button className="admin-edit" onClick={onEdit}>
+        <div className="admin-card-info">
+          <strong className="admin-card-title">{user.username}</strong>
+          <p className="admin-card-sub">{user.email}</p>
+          <p className="admin-card-sub">
+            Role: {user.role === "admin" ? "Admin" : "User"}
+          </p>
+        </div>
+      </div>
+
+      <div className="admin-card-actions">
+        <button className="admin-btn edit" onClick={onEdit}>
           Edit
         </button>
 
-        <button className="admin-delete" onClick={handleDelete}>
+        <button className="admin-btn delete" onClick={handleDelete}>
           Delete
         </button>
       </div>
-    </li>
+    </div>
   );
 }
 

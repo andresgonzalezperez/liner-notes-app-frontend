@@ -39,7 +39,7 @@ function CreateAlbum() {
     }
 
     try {
-      // 1) Create album WITHOUT cover
+      // Create album WITHOUT cover
       const createRes = await axios.post(
         "http://localhost:5005/albums",
         {
@@ -58,7 +58,7 @@ function CreateAlbum() {
 
       const createdAlbum = createRes.data;
 
-      // 2) Upload cover to Cloudinary
+      // Upload cover to Cloudinary
       const imageFile = e.target.imageUrl.files[0];
 
       if (imageFile) {
@@ -76,7 +76,7 @@ function CreateAlbum() {
         );
       }
 
-      // 3) Redirect
+      // Redirect
       navigate("/admin/albums");
 
     } catch (err) {

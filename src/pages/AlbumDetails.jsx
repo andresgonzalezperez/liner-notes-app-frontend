@@ -1,11 +1,14 @@
 import { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import RatingRings from "../components/RatingRings";
+import ringIcon from "../assets/ring.png";
 
 function AlbumDetails() {
   const { albumId } = useParams();
-  const { isLoggedIn, isAdmin, user, authenticateUser } = useContext(AuthContext);
+  const { isLoggedIn, isAdmin, user, authenticateUser } =
+    useContext(AuthContext);
 
   const [album, setAlbum] = useState(null);
   const [comment, setComment] = useState("");
@@ -18,10 +21,8 @@ function AlbumDetails() {
       .catch((err) => console.log(err));
   }, [albumId]);
 
-  // Check if this album is already a favorite
-  const isFavorite = user?.favoriteAlbums?.some(a => a._id === albumId);
+  const isFavorite = user?.favoriteAlbums?.some((a) => a._id === albumId);
 
-  // Add/remove album from favorites
   const toggleFavorite = async () => {
     try {
       if (isFavorite) {
@@ -31,7 +32,7 @@ function AlbumDetails() {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
-          }
+          },
         );
       } else {
         await axios.post(
@@ -41,13 +42,11 @@ function AlbumDetails() {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
-          }
+          },
         );
       }
 
-      // Refresh user data
       await authenticateUser();
-
     } catch (err) {
       console.log(err);
     }
@@ -55,7 +54,6 @@ function AlbumDetails() {
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
-
     if (!comment.trim()) return;
 
     axios
@@ -66,10 +64,10 @@ function AlbumDetails() {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
-        }
+        },
       )
       .then((res) => {
-        setAlbum(res.data); // full updated album
+        setAlbum(res.data);
         setComment("");
         setRating(0);
       })
@@ -78,14 +76,11 @@ function AlbumDetails() {
 
   const handleDeleteReview = (reviewId) => {
     axios
-      .delete(
-        `http://localhost:5005/albums/${albumId}/reviews/${reviewId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        }
-      )
+      .delete(`http://localhost:5005/albums/${albumId}/reviews/${reviewId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      })
       .then(() => {
         setAlbum((prev) => ({
           ...prev,
@@ -98,31 +93,67 @@ function AlbumDetails() {
   if (!album) return <p className="loading">Loading album...</p>;
 
   return (
-    <div className="album-details">
-      <img src={album.cover} alt={album.title} className="album-details-cover" />
+    <div className="details-page">
+      {/* TOP SECTION */}
+      <div className="details-top">
+        <img src={album.cover} alt={album.title} className="details-cover" />
 
-      <div className="album-details-info">
-        <h2>{album.title}</h2>
-        <p className="album-details-artist">{album.artist?.name}</p>
+        <div className="details-info">
+          <h1>{album.title}</h1>
 
-        {/* ⭐ FAVORITE BUTTON */}
-        {isLoggedIn && (
-          <button className="favorite-button" onClick={toggleFavorite}>
-            {isFavorite ? "💔 Remove from Favorites" : "❤️ Add to Favorites"}
+          <Link
+            to={`/artists/${album.artist?._id}`}
+            className="details-artist-link"
+          >
+            {album.artist?.name}
+          </Link>
+
+          {isLoggedIn && (
+            <button className="favorite-button" onClick={toggleFavorite}>
+              {isFavorite ? "Remove from favorites" : "Add to favorites"}
+            </button>
+          )}
+
+          <p className="details-description">{album.description}</p>
+        </div>
+      </div>
+
+      {/* REVIEW FORM */}
+      {isLoggedIn && (
+        <form className="review-form" onSubmit={handleReviewSubmit}>
+        <RatingRings rating={rating} onChange={setRating} />
+          <textarea
+            className="review-input"
+            placeholder="Write a review..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+
+          <button className="review-submit" type="submit">
+            Submit Review
           </button>
-        )}
+        </form>
+      )}
 
-        <h3>Reviews</h3>
-        <div className="reviews-list">
-          {album.reviews?.map((rev) => (
-            <div key={rev._id} className="review-item">
-              <strong>{rev.user?.username || "Unknown user"}</strong>
+      {/* REVIEWS LIST */}
+      <div className="reviews-list">
+        {album.reviews?.map((rev) => (
+          <div key={rev._id} className="review-card">
+            <img
+              className="review-avatar"
+              src={rev.user?.avatar}
+              alt={rev.user?.username}
+            />
 
+            <div>
+              <p className="review-user">{rev.user?.username}</p>
               <p className="review-rating">
-                {"⭐".repeat(rev.rating)} <span>({rev.rating}/5)</span>
+                {[...Array(rev.rating)].map((_, i) => ( 
+                  <img key={i} src={ringIcon} alt="ring" className="rating-ring" />
+                   ))}
+                   <span>({rev.rating}/5)</span>
               </p>
-
-              <p>{rev.comment}</p>
+              <p className="review-text">{rev.comment}</p>
 
               {isAdmin && (
                 <button
@@ -133,42 +164,11 @@ function AlbumDetails() {
                 </button>
               )}
             </div>
-          ))}
-        </div>
-
-        {isLoggedIn && (
-          <form className="review-form" onSubmit={handleReviewSubmit}>
-            <select
-              className="review-rating-select"
-              value={rating}
-              onChange={(e) => setRating(Number(e.target.value))}
-            >
-              <option value={0}>0 ⭐</option>
-              <option value={1}>1 ⭐</option>
-              <option value={2}>2 ⭐</option>
-              <option value={3}>3 ⭐</option>
-              <option value={4}>4 ⭐</option>
-              <option value={5}>5 ⭐</option>
-            </select>
-
-            <textarea
-              className="review-input"
-              placeholder="Write a review..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-
-            <button className="review-button" type="submit">
-              Submit Review
-            </button>
-          </form>
-        )}
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
 export default AlbumDetails;
-
-
-

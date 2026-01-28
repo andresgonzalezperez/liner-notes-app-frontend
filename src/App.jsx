@@ -3,6 +3,7 @@ import "./App.css";
 
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Footer from "./components/Footer";
 
 // Public pages
 import Home from "./pages/Home";
@@ -132,9 +133,13 @@ function App() {
 
         </Routes>
       </main>
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 }
+
 
 export default App;
 

@@ -19,7 +19,7 @@ function Albums() {
   return (
     <div className="page-container">
       <div className="albums-page">
-        <h2>All Albums</h2>
+        <h2 className="carousel-title">All Albums</h2>
 
         <div className="grid-container">
           {albums.map((album) => (

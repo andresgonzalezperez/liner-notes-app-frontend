@@ -4,36 +4,36 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const { authenticateUser, user } = useContext(AuthContext);
+  const { authenticateUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Send login request
       const res = await axios.post("http://localhost:5005/auth/login", {
         email,
         password,
       });
 
-      // Store token in localStorage
       localStorage.setItem("authToken", res.data.authToken);
 
-      // Wait for AuthContext to refresh user data
       await authenticateUser();
       navigate("/");
     } catch (err) {
-      console.log(err);
+      setErrorMessage("Invalid email or password");
     }
   };
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
       <h2>Login</h2>
+
+      {errorMessage && <p className="auth-error">{errorMessage}</p>}
 
       <input
         type="email"
@@ -59,5 +59,6 @@ function Login() {
 }
 
 export default Login;
+
 
 

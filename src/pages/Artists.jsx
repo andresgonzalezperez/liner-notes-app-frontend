@@ -24,7 +24,7 @@ function Artists() {
   return (
     <div className="page-container">
       <div className="artists-page">
-        <h2>All Artists</h2>
+        <h2 className="carousel-title">All Artists</h2>
 
         <div className="grid-container">
           {artists.map((artist) => (

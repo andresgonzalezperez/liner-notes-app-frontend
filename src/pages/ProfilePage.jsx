@@ -16,7 +16,6 @@ function ProfilePage() {
     avatarFile: null,
   });
 
-  // HANDLE INPUT CHANGES
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -27,12 +26,10 @@ function ProfilePage() {
     }
   };
 
-  // HANDLE FULL PROFILE UPDATE
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
 
     try {
-      // Update username + email
       await axios.put(
         `http://localhost:5005/users/${user._id}/update`,
         {
@@ -46,7 +43,6 @@ function ProfilePage() {
         }
       );
 
-      // Update password (optional)
       if (
         formData.currentPassword.trim() !== "" &&
         formData.newPassword.trim() !== ""
@@ -65,7 +61,6 @@ function ProfilePage() {
         );
       }
 
-      // Update avatar (optional)
       if (formData.avatarFile) {
         const uploadData = new FormData();
         uploadData.append("imageUrl", formData.avatarFile);
@@ -76,10 +71,8 @@ function ProfilePage() {
         );
       }
 
-      // Refresh user data
       await authenticateUser();
       setIsEditing(false);
-
     } catch (err) {
       console.log(err);
       alert("Error updating profile");
@@ -87,10 +80,10 @@ function ProfilePage() {
   };
 
   return (
-    <div className="page-container">
-      <div className="profile-page">
-        <h1>{user?.username}'s profile</h1>
+    <div className="profile-page-wrapper">
+      <h2 className="admin-title">My Profile</h2>
 
+      <div className="profile-card">
         {/* VIEW MODE */}
         {!isEditing && (
           <>
@@ -101,15 +94,16 @@ function ProfilePage() {
                 className="profile-avatar"
               />
 
-              <p>
+              <p className="profile-field">
                 <strong>Username:</strong> {user?.username}
               </p>
-              <p>
+
+              <p className="profile-field">
                 <strong>Email:</strong> {user?.email}
               </p>
             </div>
 
-            <button className="edit-button" onClick={() => setIsEditing(true)}>
+            <button className="admin-btn edit" onClick={() => setIsEditing(true)}>
               Edit Profile
             </button>
           </>
@@ -117,26 +111,29 @@ function ProfilePage() {
 
         {/* EDIT MODE */}
         {isEditing && (
-          <form className="edit-user-form" onSubmit={handleProfileUpdate}>
-            <h3>Edit Profile</h3>
+          <form className="admin-form small" onSubmit={handleProfileUpdate}>
+            <h3 className="admin-subtitle">Edit Profile</h3>
 
-            <label>Username</label>
+            <label className="admin-label">Username</label>
             <input
+              className="admin-input"
               name="username"
               value={formData.username}
               onChange={handleChange}
             />
 
-            <label>Email</label>
+            <label className="admin-label">Email</label>
             <input
+              className="admin-input"
               name="email"
               value={formData.email}
               onChange={handleChange}
             />
 
-            <h4>Change Password</h4>
+            <h4 className="profile-section-title">Change Password</h4>
 
             <input
+              className="admin-input"
               name="currentPassword"
               type="password"
               value={formData.currentPassword}
@@ -145,6 +142,7 @@ function ProfilePage() {
             />
 
             <input
+              className="admin-input"
               name="newPassword"
               type="password"
               value={formData.newPassword}
@@ -152,18 +150,26 @@ function ProfilePage() {
               placeholder="New password"
             />
 
-            <h4>Change Avatar</h4>
+            <h4 className="profile-section-title">Change Avatar</h4>
 
             <input
+              className="admin-input"
               type="file"
               name="avatarFile"
               accept="image/*"
               onChange={handleChange}
             />
 
-            <div className="edit-actions">
-              <button type="submit">Save Changes</button>
-              <button type="button" onClick={() => setIsEditing(false)}>
+            <div className="admin-form-actions">
+              <button type="submit" className="admin-btn save">
+                Save Changes
+              </button>
+
+              <button
+                type="button"
+                className="admin-btn delete"
+                onClick={() => setIsEditing(false)}
+              >
                 Cancel
               </button>
             </div>
@@ -175,5 +181,6 @@ function ProfilePage() {
 }
 
 export default ProfilePage;
+
 
 

@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import logo from "../assets/Liner-Notes-logo-500x500.png";
 import defaultAvatar from "../assets/default-avatar.png";
+import SearchBar from "./SearchBar";
 
 function Navbar() {
   const { isLoggedIn, isAdmin, user, logOutUser } = useContext(AuthContext);
@@ -18,7 +19,11 @@ function Navbar() {
           <Link to="/artists" className="nav-link">
             Artists
           </Link>
-          {isLoggedIn && <Link to="/my-favorites">My Favorites</Link>}
+          {isLoggedIn && (
+            <Link to="/my-favorites" className="nav-link">
+              My Favorites
+            </Link>
+          )}
           {isLoggedIn && isAdmin && (
             <Link to="/admin/dashboard" className="nav-link">
               Admin Dashboard
@@ -35,6 +40,12 @@ function Navbar() {
 
         {/* Right side */}
         <div className="nav-right">
+          
+          {/* SearchBar */}
+          <div className="nav-search">
+            <SearchBar />
+          </div>
+
           {!isLoggedIn ? (
             <>
               <Link to="/login" className="nav-link">

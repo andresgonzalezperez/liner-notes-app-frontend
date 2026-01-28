@@ -6,9 +6,7 @@ import UserRow from "./UserRow";
 function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [editingUserId, setEditingUserId] = useState(null);
-  const { isAdmin } = useContext(AuthContext);
 
-  // Fetch all users
   const fetchUsers = async () => {
     try {
       const res = await axios.get("http://localhost:5005/users", {
@@ -28,9 +26,9 @@ function ManageUsers() {
 
   return (
     <div className="admin-page">
-      <h2>Manage Users</h2>
+      <h2 className="admin-title">Manage Users</h2>
 
-      <ul className="admin-list">
+      <div className="admin-list">
         {users.map((user) => (
           <UserRow
             key={user._id}
@@ -41,10 +39,9 @@ function ManageUsers() {
             onUpdated={fetchUsers}
           />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
 
 export default ManageUsers;
-

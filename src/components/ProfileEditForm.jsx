@@ -38,7 +38,7 @@ function ProfileEditForm({ onCancel }) {
         await axios.put(
           `http://localhost:5005/users/${user._id}/change-password`,
           {
-            currentPassword: formData.password, // or split into current/new if you want
+            currentPassword: formData.password,
             newPassword: formData.password,
           },
           {

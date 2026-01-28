@@ -32,47 +32,55 @@ function ManageArtists() {
 
   return (
     <div className="admin-page">
-      <h2>Manage Artists</h2>
+      <h2 className="admin-title">Manage Artists</h2>
 
-      <Link to="/admin/artists/create" className="admin-button">
+      <Link to="/admin/artists/create" className="admin-create-btn">
         + Create Artist
       </Link>
 
-      <ul className="admin-list">
+      <div className="admin-list">
         {artists.map((artist) => (
-          <li key={artist._id} className="admin-item">
-            <strong>{artist.name}</strong>
+          <div key={artist._id} className="admin-card">
+            <div className="admin-card-left">
+              <img
+                src={artist.image}
+                alt={artist.name}
+                className="admin-thumb"
+              />
 
-            {artist.genre && (
-              <span className="admin-subtext"> — {artist.genre}</span>
-            )}
+              <div className="admin-card-info">
+                <strong className="admin-card-title">{artist.name}</strong>
 
-            <span className="admin-subtext">
-              {" "}
-              ({artist.reviews?.length || 0} reviews)
-            </span>
+                {artist.genre && (
+                  <p className="admin-card-sub">{artist.genre}</p>
+                )}
 
-            <div>
+                <p className="admin-card-sub">
+                  {artist.reviews?.length || 0} reviews
+                </p>
+              </div>
+            </div>
+
+            <div className="admin-card-actions">
               <Link
                 to={`/admin/artists/${artist._id}/edit`}
-                className="admin-edit"
+                className="admin-btn edit"
               >
                 Edit
               </Link>
 
               <button
-                className="admin-delete"
+                className="admin-btn delete"
                 onClick={() => handleDelete(artist._id)}
               >
                 Delete
               </button>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
 
 export default ManageArtists;
-

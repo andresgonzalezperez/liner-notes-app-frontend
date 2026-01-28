@@ -8,23 +8,37 @@ function Signup() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios
-      .post("http://localhost:5005/auth/signup", {
+    try {
+      await axios.post("http://localhost:5005/auth/signup", {
         username,
         email,
         password,
-      })
-      .then(() => navigate("/login"))
-      .catch((err) => console.log(err));
+      });
+
+      navigate("/login");
+    } catch (err) {
+      const msg = err.response?.data?.message;
+
+      if (msg === "EMAIL_EXISTS") {
+        setErrorMessage("This email belongs to an existing account");
+      } else if (msg === "USERNAME_EXISTS") {
+        setErrorMessage("This username is not available");
+      } else {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
+    }
   };
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
       <h2>Signup</h2>
+
+      {errorMessage && <p className="auth-error">{errorMessage}</p>}
 
       <input
         type="text"
@@ -50,9 +64,12 @@ function Signup() {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <button className="auth-button" type="submit">Create Account</button>
+      <button className="auth-button" type="submit">
+        Create Account
+      </button>
     </form>
   );
 }
 
 export default Signup;
+

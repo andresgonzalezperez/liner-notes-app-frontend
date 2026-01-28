@@ -34,44 +34,58 @@ function ManageAlbums() {
 
   return (
     <div className="admin-page">
-      <h2>Manage Albums</h2>
+      <h2 className="admin-title">Manage Albums</h2>
 
-      <Link to="/admin/albums/create" className="admin-button">
+      <Link to="/admin/albums/create" className="admin-create-btn">
         + Create Album
       </Link>
 
-      <ul className="admin-list">
+      <div className="admin-list">
         {albums.map((album) => (
-          <li key={album._id} className="admin-item">
-            <strong>{album.title}</strong>
-            {album.artist && (
-              <span className="admin-subtext"> — {album.artist.name}</span>
-            )}
-            <span className="admin-subtext">
-              {" "}
-              ({album.reviews?.length || 0} reviews)
-            </span>
+          <div key={album._id} className="admin-card">
+            <div className="admin-card-left">
+              <img
+                src={album.cover}
+                alt={album.title}
+                className="admin-thumb"
+              />
 
-            <div>
+              <div className="admin-card-info">
+                <strong className="admin-card-title">{album.title}</strong>
+
+                {album.artist && (
+                  <p className="admin-card-sub">
+                    {album.artist.name}
+                  </p>
+                )}
+
+                <p className="admin-card-sub">
+                  {album.reviews?.length || 0} reviews
+                </p>
+              </div>
+            </div>
+
+            <div className="admin-card-actions">
               <Link
                 to={`/admin/albums/${album._id}/edit`}
-                className="admin-edit"
+                className="admin-btn edit"
               >
                 Edit
               </Link>
 
               <button
-                className="admin-delete"
+                className="admin-btn delete"
                 onClick={() => handleDelete(album._id)}
               >
                 Delete
               </button>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
 
 export default ManageAlbums;
+

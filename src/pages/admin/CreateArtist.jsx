@@ -13,7 +13,7 @@ function CreateArtist() {
     e.preventDefault();
 
     try {
-      // 1) Create artist WITHOUT image
+      // Create artist WITHOUT image
       const createRes = await axios.post(
         "http://localhost:5005/artists",
         { name, genre, country },
@@ -26,7 +26,7 @@ function CreateArtist() {
 
       const createdArtist = createRes.data;
 
-      // 2) Upload image to Cloudinary
+      // Upload image to Cloudinary
       const imageFile = e.target.imageUrl.files[0];
 
       if (imageFile) {
@@ -44,7 +44,7 @@ function CreateArtist() {
         );
       }
 
-      // 3) Redirect
+      // Redirect
       navigate("/admin/artists");
 
     } catch (err) {

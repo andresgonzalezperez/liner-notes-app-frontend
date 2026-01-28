@@ -30,7 +30,7 @@ function EditAlbum() {
         setYear(a.year);
         setGenre(a.genre);
         setTracklist(a.tracklist);
-        setCurrentCover(a.cover); // store current cover
+        setCurrentCover(a.cover);
       })
       .catch((err) => console.log(err));
   }, [albumId]);
@@ -41,13 +41,9 @@ function EditAlbum() {
     setTracklist(updated);
   };
 
-  const addTrack = () => {
-    setTracklist([...tracklist, ""]);
-  };
-
-  const removeTrack = (index) => {
+  const addTrack = () => setTracklist([...tracklist, ""]);
+  const removeTrack = (index) =>
     setTracklist(tracklist.filter((_, i) => i !== index));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,7 +54,6 @@ function EditAlbum() {
     }
 
     try {
-      // 1) Update album WITHOUT touching the cover
       await axios.put(
         `http://localhost:5005/albums/${albumId}`,
         {
@@ -75,7 +70,6 @@ function EditAlbum() {
         }
       );
 
-      // 2) If a new image was selected → upload to Cloudinary
       const imageFile = e.target.imageUrl.files[0];
 
       if (imageFile) {
@@ -93,9 +87,7 @@ function EditAlbum() {
         );
       }
 
-      // 3) Redirect
       navigate("/admin/albums");
-
     } catch (err) {
       console.log(err);
       alert("Error updating album");
@@ -103,86 +95,86 @@ function EditAlbum() {
   };
 
   return (
-    <form className="admin-form" onSubmit={handleSubmit}>
-      <h2>Edit Album</h2>
+    <div className="admin-page">
+      <h2 className="admin-title">Edit Album</h2>
 
-      <input
-        className="admin-input"
-        placeholder="Album Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-
-      <select
-        className="admin-input"
-        value={artist}
-        onChange={(e) => setArtist(e.target.value)}
-      >
-        <option value="">Select Artist</option>
-        {artists.map((a) => (
-          <option key={a._id} value={a._id}>
-            {a.name}
-          </option>
-        ))}
-      </select>
-
-      <input
-        className="admin-input"
-        placeholder="Year"
-        type="number"
-        value={year}
-        onChange={(e) => setYear(e.target.value)}
-      />
-
-      {/* Show current cover */}
-      {currentCover && (
-        <img
-          src={currentCover}
-          alt="Current cover"
-          className="album-edit-cover-preview"
+      <form className="admin-form" onSubmit={handleSubmit}>
+        <label className="admin-label">Album Title</label>
+        <input
+          className="admin-input"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
-      )}
 
-      {/* File input for Cloudinary */}
-      <input
-        className="admin-input"
-        type="file"
-        name="imageUrl"
-        accept="image/*"
-      />
+        <label className="admin-label">Artist</label>
+        <select
+          className="admin-input"
+          value={artist}
+          onChange={(e) => setArtist(e.target.value)}
+        >
+          <option value="">Select Artist</option>
+          {artists.map((a) => (
+            <option key={a._id} value={a._id}>
+              {a.name}
+            </option>
+          ))}
+        </select>
 
-      <input
-        className="admin-input"
-        placeholder="Genre"
-        value={genre}
-        onChange={(e) => setGenre(e.target.value)}
-      />
+        <label className="admin-label">Year</label>
+        <input
+          className="admin-input"
+          type="number"
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+        />
 
-      <h4>Tracklist</h4>
-      {tracklist.map((track, index) => (
-        <div key={index} className="track-row">
-          <input
-            className="admin-input"
-            placeholder={`Track ${index + 1}`}
-            value={track}
-            onChange={(e) => handleTrackChange(index, e.target.value)}
-          />
-          <button
-            type="button"
-            className="admin-delete small"
-            onClick={() => removeTrack(index)}
-          >
-            X
-          </button>
-        </div>
-      ))}
+        {currentCover && (
+          <div className="cover-preview-box">
+            <img
+              src={currentCover}
+              alt="Current cover"
+              className="cover-preview"
+            />
+          </div>
+        )}
 
-      <button type="button" className="admin-button" onClick={addTrack}>
-        + Add Track
-      </button>
+        <label className="admin-label">Upload New Cover</label>
+        <input className="admin-input" type="file" name="imageUrl" accept="image/*" />
 
-      <button className="admin-button">Save Changes</button>
-    </form>
+        <label className="admin-label">Genre</label>
+        <input
+          className="admin-input"
+          value={genre}
+          onChange={(e) => setGenre(e.target.value)}
+        />
+
+        <h3 className="admin-subtitle">Tracklist</h3>
+
+        {tracklist.map((track, index) => (
+          <div key={index} className="track-row">
+            <input
+              className="admin-input"
+              placeholder={`Track ${index + 1}`}
+              value={track}
+              onChange={(e) => handleTrackChange(index, e.target.value)}
+            />
+            <button
+              type="button"
+              className="admin-btn delete small"
+              onClick={() => removeTrack(index)}
+            >
+              X
+            </button>
+          </div>
+        ))}
+
+        <button type="button" className="admin-btn add" onClick={addTrack}>
+          + Add Track
+        </button>
+
+        <button className="admin-btn save">Save Changes</button>
+      </form>
+    </div>
   );
 }
 
