@@ -33,7 +33,7 @@ function AlbumDetails() {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
-          },
+          }
         );
       } else {
         await axios.post(
@@ -43,7 +43,7 @@ function AlbumDetails() {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
-          },
+          }
         );
       }
 
@@ -65,7 +65,7 @@ function AlbumDetails() {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
-        },
+        }
       )
       .then((res) => {
         setAlbum(res.data);
@@ -116,13 +116,30 @@ function AlbumDetails() {
           )}
 
           <p className="details-description">{album.description}</p>
+
+          {/* TRACKLIST */}
+          {album.tracklist?.length > 0 && (
+            <div className="tracklist">
+              <h3 className="details-subtitle">Tracklist</h3>
+
+              <ul className="tracklist-list">
+                {album.tracklist.map((track, index) => (
+                  <li key={index} className="tracklist-item">
+                    <span className="track-number">{index + 1}.</span>
+                    <span className="track-title">{track}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
 
       {/* REVIEW FORM */}
       {isLoggedIn && (
         <form className="review-form" onSubmit={handleReviewSubmit}>
-        <RatingRings rating={rating} onChange={setRating} />
+          <RatingRings rating={rating} onChange={setRating} />
+
           <textarea
             className="review-input"
             placeholder="Write a review..."
@@ -148,12 +165,19 @@ function AlbumDetails() {
 
             <div>
               <p className="review-user">{rev.user?.username}</p>
+
               <p className="review-rating">
-                {[...Array(rev.rating)].map((_, i) => ( 
-                  <img key={i} src={ringIcon} alt="ring" className="rating-ring" />
-                   ))}
-                   <span>({rev.rating}/5)</span>
+                {[...Array(rev.rating)].map((_, i) => (
+                  <img
+                    key={i}
+                    src={ringIcon}
+                    alt="ring"
+                    className="rating-ring"
+                  />
+                ))}
+                <span>({rev.rating}/5)</span>
               </p>
+
               <p className="review-text">{rev.comment}</p>
 
               {isAdmin && (
@@ -173,3 +197,4 @@ function AlbumDetails() {
 }
 
 export default AlbumDetails;
+

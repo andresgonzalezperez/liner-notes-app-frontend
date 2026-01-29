@@ -984,15 +984,36 @@ html, body {
   border: 1px solid #444;
 }
 
-/* -------------------------------------------------- */
 /* TRACKLIST */
-/* -------------------------------------------------- */
+.tracklist {
+  margin-top: 2rem;
+}
 
-.track-row {
+.tracklist-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.tracklist-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 1rem;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #333;
+  color: #ddd;
+}
+
+.track-number {
+  font-weight: 700;
+  color: #fff;
+  width: 30px;
+  text-align: right;
+}
+
+.track-title {
+  flex: 1;
+  text-align: left;
 }
 
 /* -------------------------------------------------- */
@@ -1169,6 +1190,14 @@ html, body {
     width: 260px;
     height: 260px;
     margin: 0 auto;
+  }
+
+  .tracklist-item {
+    gap: 0.5rem;
+  }
+
+  .track-number {
+    width: 20px;
   }
 
   /* REVIEW FORM */
