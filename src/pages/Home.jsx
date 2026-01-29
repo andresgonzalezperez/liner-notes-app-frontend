@@ -12,7 +12,7 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}albums`)
+      .get(`${API_URL}/albums`)
       .then((res) => setAlbums(res.data))
       .catch((err) => console.log(err));
 
