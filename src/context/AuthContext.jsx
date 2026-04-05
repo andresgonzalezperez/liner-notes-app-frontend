@@ -54,8 +54,17 @@ function AuthProviderWrapper({ children }) {
 
   // Run authentication on app load
   useEffect(() => {
-    authenticateUser();
-  }, []);
+  const storedToken = localStorage.getItem("authToken");
+
+  if (storedToken) {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+  } else {
+    delete axios.defaults.headers.common["Authorization"];
+  }
+
+  authenticateUser();
+}, []);
+
 
   return (
     <AuthContext.Provider
